@@ -1,0 +1,55 @@
+# Cozy Calc Architecture Plan
+
+## Product Direction
+
+Build Cozy Calc as a React + Tailwind CSS single-page calculator. The app should stay on one screen, use the warm earthy visual language from the issues, and keep calculation logic framework-independent so it can be tested without React.
+
+## Proposed Module Structure
+
+- `src/main.tsx`: React entrypoint.
+- `src/App.tsx`: App shell that renders the calculator screen.
+- `src/components/calculator/Calculator.tsx`: Main single-screen layout that composes display, grid, and state hook.
+- `src/components/calculator/Display.tsx`: Current entry, running value, result state, update animation, and long-number scaling.
+- `src/components/calculator/ButtonGrid.tsx`: Calculator key layout and semantic button definitions.
+- `src/components/calculator/Button.tsx`: Shared tactile button component using design-system variants and press feedback.
+- `src/hooks/useCalculator.ts`: UI state layer that accepts button intents and delegates arithmetic to the engine.
+- `src/lib/calculator/engine.ts`: Pure arithmetic/state transition module for add, subtract, multiply, divide, percentage, decimals, clear/all-clear, chained operations, divide-by-zero, precision handling, and repeated equals.
+- `src/lib/calculator/types.ts`: Shared calculator button, operation, state, and action types.
+- `src/styles/index.css`: Tailwind base imports, global reset, CSS custom properties, and animation utilities.
+- `tailwind.config.ts`: Warm earthy theme tokens, spacing, rounded shapes, shadow/depth tokens, and typography extensions.
+- `tests/unit/calculator-engine.test.ts`: Unit coverage for the pure engine.
+- `tests/e2e/calculator-flow.spec.ts`: End-to-end tap flows across mobile and desktop viewports.
+
+## Shared Types
+
+- `Digit`: `"0"` through `"9"`.
+- `Operator`: `"add" | "subtract" | "multiply" | "divide"`.
+- `CalculatorAction`: digit, decimal, operator, percent, clear, all-clear, equals.
+- `CalculatorState`: current entry string, stored/running value, pending operator, last operation for repeated equals, error flag/message, and display mode.
+- `ButtonDefinition`: label, action, visual variant, optional grid span, and accessible label.
+
+## Issue Dependencies
+
+- Issue #1 creates the React, Tailwind, TypeScript, linting, formatting, app shell, `.env.example`, and base folders.
+- Issue #2 depends on #1 and defines shared design tokens in Tailwind/global styles.
+- Issue #3 depends on #1 and implements the pure calculator engine.
+- Issue #4 should depend on #3 in practice, because the state hook connects UI actions to the engine. The issue text says it depends on #2, so implement after both #2 and #3 are available.
+- Issue #5 depends on #1 and #2 for the display component and typography tokens.
+- Issue #6 depends on #1 and #2 for the button grid and shared button styling.
+- Issue #7 depends on #4, #5, and #6 in practice: assemble the state hook, display, and button grid into the single-screen calculator.
+- Issue #8 depends on #6 for button press feedback.
+- Issue #9 depends on #5 for display update and result-settle animation.
+- Issue #10 depends on #3 for arithmetic engine tests.
+- Issue #11 depends on #7, #8, and #9 for full calculator flow and animation-aware e2e tests.
+- Issue #12 depends on the assembled UI from #7 and should also account for #8 and #9 animation behavior.
+
+## Key Design Decisions
+
+- Keep `engine.ts` pure and independent of React so edge cases are deterministic and easy to unit test.
+- Store display values as strings at the UI boundary to preserve decimal-entry intent, while normalizing numeric operations inside the engine.
+- Use a small decimal rounding helper in the engine to reduce floating-point artifacts without hiding error states like divide-by-zero.
+- Represent buttons as data in `ButtonGrid.tsx`, then render through one `Button` component so visual variants, accessibility labels, and animation behavior stay consistent.
+- Use Tailwind theme extensions plus CSS custom properties for the warm palette and depth tokens, allowing later polish without touching component logic.
+- Prefer CSS transitions/keyframes for tactile feedback and display settle animations; gate motion with `prefers-reduced-motion`.
+- Design mobile-first with fixed calculator interaction regions and responsive constraints so the calculator remains visible without scrolling.
+- Add Playwright for end-to-end coverage once the assembled UI exists, with selectors based on accessible roles/names rather than implementation-specific class names.

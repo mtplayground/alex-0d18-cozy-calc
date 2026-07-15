@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+
 import type { CalculatorAction } from '../../lib/calculator';
 
 export type ButtonVariant = 'number' | 'operator' | 'utility' | 'equals';
@@ -32,15 +34,63 @@ export function Button({
   className = '',
   disabled = false,
 }: ButtonProps) {
+  const [isPressed, setIsPressed] = useState(false);
+  const feedbackStart = useRef<number | null>(null);
+  const feedbackTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (feedbackStart.current !== null) {
+        window.clearTimeout(feedbackStart.current);
+      }
+
+      if (feedbackTimeout.current !== null) {
+        window.clearTimeout(feedbackTimeout.current);
+      }
+    };
+  }, []);
+
+  const triggerFeedback = () => {
+    if (disabled) {
+      return;
+    }
+
+    if (feedbackStart.current !== null) {
+      window.clearTimeout(feedbackStart.current);
+    }
+
+    if (feedbackTimeout.current !== null) {
+      window.clearTimeout(feedbackTimeout.current);
+    }
+
+    setIsPressed(false);
+    feedbackStart.current = window.setTimeout(() => {
+      setIsPressed(true);
+      feedbackStart.current = null;
+      feedbackTimeout.current = window.setTimeout(() => {
+        setIsPressed(false);
+        feedbackTimeout.current = null;
+      }, 260);
+    });
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      triggerFeedback();
+    }
+  };
+
   return (
     <button
       type="button"
-      className={`calculator-button flex min-h-12 min-w-0 touch-manipulation select-none items-center justify-center border px-2 font-display text-2xl font-bold leading-none transition-colors duration-150 ease-cozy focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 disabled:pointer-events-none disabled:opacity-50 sm:min-h-16 sm:text-3xl ${variantClasses[variant]} ${className}`}
+      className={`calculator-button flex min-h-12 min-w-0 touch-manipulation select-none items-center justify-center border px-2 font-display text-2xl font-bold leading-none transition-colors duration-150 ease-cozy focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 disabled:pointer-events-none disabled:opacity-50 sm:min-h-16 sm:text-3xl ${isPressed ? 'calculator-button-feedback' : ''} ${variantClasses[variant]} ${className}`}
       aria-label={ariaLabel ?? label}
       disabled={disabled}
+      onPointerDown={triggerFeedback}
+      onKeyDown={handleKeyDown}
       onClick={() => onPress(action)}
     >
-      {label}
+      <span className="relative z-10">{label}</span>
     </button>
   );
 }

@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import type { CalculatorStatus, Operator } from '../../lib/calculator';
 
 export interface DisplayProps {
@@ -16,6 +18,8 @@ const operatorSymbols: Record<Operator, string> = {
   divide: '÷',
 };
 
+type DisplayAnimation = 'update' | 'settle' | null;
+
 export function Display({
   currentEntry,
   runningValue,
@@ -28,6 +32,43 @@ export function Display({
     status === 'result' || status === 'error' ? (displayValue ?? currentEntry) : currentEntry;
   const primarySizeClass = getPrimarySizeClass(primaryValue);
   const isError = status === 'error';
+  const [animation, setAnimation] = useState<DisplayAnimation>(null);
+  const previousValue = useRef(primaryValue);
+  const previousStatus = useRef(status);
+  const animationTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (animationTimeout.current !== null) {
+        window.clearTimeout(animationTimeout.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const valueChanged = primaryValue !== previousValue.current;
+    const settledResult = status === 'result' && previousStatus.current !== 'result';
+
+    if (!valueChanged && !settledResult) {
+      return;
+    }
+
+    if (animationTimeout.current !== null) {
+      window.clearTimeout(animationTimeout.current);
+    }
+
+    setAnimation(settledResult ? 'settle' : 'update');
+    animationTimeout.current = window.setTimeout(
+      () => {
+        setAnimation(null);
+        animationTimeout.current = null;
+      },
+      settledResult ? 420 : 220,
+    );
+
+    previousValue.current = primaryValue;
+    previousStatus.current = status;
+  }, [primaryValue, status]);
 
   return (
     <section
@@ -53,7 +94,7 @@ export function Display({
       </div>
 
       <output
-        className={`${primarySizeClass} block min-w-0 break-all font-display font-bold leading-none tabular-nums text-cocoa-600 [overflow-wrap:anywhere]`}
+        className={`${primarySizeClass} ${getAnimationClass(animation)} block min-w-0 break-all font-display font-bold leading-none tabular-nums text-cocoa-600 [overflow-wrap:anywhere]`}
         aria-label={isError ? 'Calculator error' : 'Current entry'}
         aria-live="polite"
         title={primaryValue}
@@ -80,4 +121,16 @@ function getPrimarySizeClass(value: string): string {
   }
 
   return 'text-3xl sm:text-4xl';
+}
+
+function getAnimationClass(animation: DisplayAnimation): string {
+  if (animation === 'settle') {
+    return 'calculator-display-settle';
+  }
+
+  if (animation === 'update') {
+    return 'calculator-display-update';
+  }
+
+  return '';
 }

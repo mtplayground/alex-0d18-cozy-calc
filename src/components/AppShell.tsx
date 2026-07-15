@@ -1,16 +1,12 @@
+import { Calculator } from './calculator/Calculator';
+
 export function AppShell() {
   return (
-    <main className="min-h-dvh bg-stone-50 px-4 py-6 text-stone-950 sm:px-6">
-      <section className="mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-md items-center justify-center">
-        <div className="w-full rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium uppercase tracking-wide text-stone-500">Foundation</p>
-          <h1 className="mt-3 text-3xl font-semibold">Calculator app shell</h1>
-          <p className="mt-3 text-base leading-7 text-stone-600">
-            React, TypeScript, Tailwind CSS, linting, formatting, and responsive viewport
-            configuration are ready for the feature issues.
-          </p>
-        </div>
-      </section>
+    <main className="flex min-h-dvh overflow-hidden bg-cream-100 px-3 py-2 text-cocoa-600 sm:px-6 sm:py-6">
+      <h1 className="sr-only">Calculator</h1>
+      <div className="mx-auto flex h-[calc(100dvh-1rem)] w-full items-center justify-center sm:h-[calc(100dvh-3rem)]">
+        <Calculator />
+      </div>
     </main>
   );
 }

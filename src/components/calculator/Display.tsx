@@ -31,7 +31,7 @@ export function Display({
 
   return (
     <section
-      className={`calculator-display flex min-h-36 w-full flex-col justify-between gap-4 px-5 py-5 text-right sm:min-h-44 sm:px-6 ${className}`}
+      className={`calculator-display flex min-h-32 w-full flex-col justify-between gap-4 px-5 py-5 text-right sm:min-h-44 sm:px-6 ${className}`}
       aria-label="Calculator display"
     >
       <div className="flex min-h-8 items-start justify-between gap-3">

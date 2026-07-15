@@ -90,6 +90,20 @@
     font-family: Inter, ui-rounded, ui-sans-serif, system-ui, sans-serif;
   }
 
+  .calculator-display-update,
+  .calculator-display-settle {
+    transform-origin: right center;
+    will-change: opacity, transform;
+  }
+
+  .calculator-display-update {
+    animation: calculator-display-update 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .calculator-display-settle {
+    animation: calculator-display-settle 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
   .calculator-display-value {
     font-size: clamp(2.5rem, 13vw, 4.5rem);
     font-weight: 700;
@@ -168,6 +182,34 @@
     }
   }
 
+  @keyframes calculator-display-update {
+    0% {
+      opacity: 0.56;
+      transform: translateY(0.18rem);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes calculator-display-settle {
+    0% {
+      color: var(--color-terracotta-action-strong);
+      transform: scale(1.028) translateY(-0.08rem);
+    }
+
+    55% {
+      transform: scale(0.992) translateY(0.03rem);
+    }
+
+    100% {
+      color: var(--color-cocoa-text);
+      transform: scale(1) translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .calculator-button-feedback {
       animation: none;
@@ -175,6 +217,14 @@
 
     .calculator-button-feedback::after {
       animation: calculator-button-pulse 160ms ease-out;
+    }
+
+    .calculator-display-update {
+      animation: calculator-display-update 160ms ease-out;
+    }
+
+    .calculator-display-settle {
+      animation: calculator-display-update 180ms ease-out;
     }
   }
 }

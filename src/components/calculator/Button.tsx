@@ -35,7 +35,7 @@ export function Button({
   return (
     <button
       type="button"
-      className={`calculator-button flex min-h-14 min-w-0 touch-manipulation select-none items-center justify-center border px-2 font-display text-2xl font-bold leading-none transition-colors duration-150 ease-cozy focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 disabled:pointer-events-none disabled:opacity-50 sm:min-h-16 sm:text-3xl ${variantClasses[variant]} ${className}`}
+      className={`calculator-button flex min-h-12 min-w-0 touch-manipulation select-none items-center justify-center border px-2 font-display text-2xl font-bold leading-none transition-colors duration-150 ease-cozy focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 disabled:pointer-events-none disabled:opacity-50 sm:min-h-16 sm:text-3xl ${variantClasses[variant]} ${className}`}
       aria-label={ariaLabel ?? label}
       disabled={disabled}
       onClick={() => onPress(action)}

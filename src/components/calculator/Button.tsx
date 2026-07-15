@@ -18,7 +18,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   number:
     'border-clay-200 bg-cream-50 text-cocoa-600 hover:bg-cream-100 focus-visible:ring-terracotta-300',
   operator:
-    'border-terracotta-500 bg-terracotta-400 text-cream-50 hover:bg-terracotta-500 focus-visible:ring-terracotta-300',
+    'border-terracotta-600 bg-terracotta-500 text-cream-50 hover:bg-terracotta-600 focus-visible:ring-terracotta-300',
   utility:
     'border-amberNeutral-200 bg-amberNeutral-100 text-amberNeutral-700 hover:bg-amberNeutral-200 focus-visible:ring-amberNeutral-300',
   equals:
